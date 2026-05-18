@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEK629 — Industrial Automation Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Exo+2:wght@400;700;800&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header>
+  <div class="header-leds">
+    <span class="led red"></span>
+    <span class="led amber"></span>
+    <span class="led green"></span>
+  </div>
+  <div class="header-inner">
+    <div class="course-badge">MEK629</div>
+    <h1>Industrial Automation</h1>
+    <p class="subtitle">Nota Kuliah &nbsp;·&nbsp; Quick Revision &nbsp;·&nbsp; Dr Rosidah Sam &nbsp;·&nbsp; UiTM</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside>
+    <div class="sidebar-inner">
+      <p class="sidebar-label">CHAPTERS</p>
+      <nav>
+        <a href="#ch1" class="nav-item ch1-link"><span class="nav-dot"></span>01 · Automation</a>
+        <a href="#ch2" class="nav-item ch2-link"><span class="nav-dot"></span>02 · Controllers</a>
+        <a href="#ch3" class="nav-item ch3-link"><span class="nav-dot"></span>03 · PLC Intro</a>
+        <a href="#ch4" class="nav-item ch4-link"><span class="nav-dot"></span>04 · Programming</a>
+        <a href="#ch5" class="nav-item ch5-link"><span class="nav-dot"></span>05 · Timers &amp; Counters</a>
+        <a href="#qr"  class="nav-item qr-link" ><span class="nav-dot"></span>⚡ Quick Ref</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ═══════════════════════════ CH1 ═══════════════════════════ -->
+    <section id="ch1" class="chapter">
+      <div class="chapter-header ch1-header">
+        <div class="ch-number">01</div>
+        <div>
+          <h2>Introduction to Automation</h2>
+          <p class="ch-desc">Industry Revolution → Types → Core Elements → Benefits</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>🏭 Industry Revolution Timeline</h3>
+          <ul class="timeline">
+            <li><span class="ir ir1">IR 1.0</span> ~1800 · Steam power + Mechanization</li>
+            <li><span class="ir ir2">IR 2.0</span> ~1900 · Electricity + Assembly lines</li>
+            <li><span class="ir ir3">IR 3.0</span> ~2000 · Computers + Robotics</li>
+            <li><span class="ir ir4">IR 4.0</span> 2013+ · IoT + Cyber-physical systems</li>
+            <li><span class="ir ir5">IR 5.0</span> 2020+ · Human-Robot collaboration</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>⚙️ 3 Types of Automation</h3>
+          <div class="type-grid">
+            <div class="type-card">
+              <span class="icon">🔒</span>
+              <strong>Fixed</strong>
+              <p>High-volume, single product. Max efficiency. Inflexible.</p>
+              <span class="tag">10K–1M units</span>
+            </div>
+            <div class="type-card">
+              <span class="icon">🔄</span>
+              <strong>Programmable</strong>
+              <p>Reprogrammable for batches. Flexible to product changes.</p>
+              <span class="tag">1–100 units</span>
+            </div>
+            <div class="type-card">
+              <span class="icon">🎯</span>
+              <strong>Flexible</strong>
+              <p>Central computer routes parts. Handles variety quickly.</p>
+              <span class="tag">100–10K units</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔗 3 Core Elements of Automation</h3>
+          <div class="pipeline">
+            <div class="pipe-step">
+              <span class="pipe-icon">📡</span>
+              <strong>Sensors</strong>
+              <small>Physical → electrical signal</small>
+            </div>
+            <span class="arrow">→</span>
+            <div class="pipe-step hl">
+              <span class="pipe-icon">🧠</span>
+              <strong>Controller (PLC)</strong>
+              <small>Receives, decides, commands</small>
+            </div>
+            <span class="arrow">→</span>
+            <div class="pipe-step">
+              <span class="pipe-icon">⚡</span>
+              <strong>Actuators</strong>
+              <small>Execute physical actions</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>✅ 5 Benefits of Automation</h3>
+          <ul class="benefit-list">
+            <li><span class="bi">📏</span><div><strong>Consistency</strong> — no "off" days, predictable output</div></li>
+            <li><span class="bi">💰</span><div><strong>Cost Reduction</strong> — less labour, less waste</div></li>
+            <li><span class="bi">🚀</span><div><strong>Productivity</strong> — 24/7 operation at constant speed</div></li>
+            <li><span class="bi">🎯</span><div><strong>Quality</strong> — less variability than human workers</div></li>
+            <li><span class="bi">🛡️</span><div><strong>Safety</strong> — removes workers from hazardous tasks</div></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH2 ═══════════════════════════ -->
+    <section id="ch2" class="chapter">
+      <div class="chapter-header ch2-header">
+        <div class="ch-number">02</div>
+        <div>
+          <h2>Controllers</h2>
+          <p class="ch-desc">Control Actions · ON/OFF · PID · Motion · PLC vs DCS</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>🧠 What is a Controller?</h3>
+          <div class="defbox">
+            The <strong>brain of a control system</strong> — receives sensor data, compares with setpoint, makes decisions, and commands actuators.
+          </div>
+          <div class="pipeline">
+            <div class="pipe-step"><strong>Input</strong></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step hl"><strong>Controller</strong></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step"><strong>Actuator → Process</strong></div>
+            <span class="arrow">↺</span>
+            <div class="pipe-step"><strong>Feedback</strong></div>
+          </div>
+        </div>
+
+        <div class="card full">
+          <h3>🎛️ Types of Control Actions</h3>
+          <div class="ctrl-table">
+            <div class="ctrl-row th">
+              <span>Type</span><span>Behaviour</span><span class="ctrl-last">Use When</span>
+            </div>
+            <div class="ctrl-row">
+              <span class="ct onoff">ON/OFF</span>
+              <span>Fully ON or OFF only. Add <strong>hysteresis</strong> to stop chattering (rapid switching).</span>
+              <span class="ctrl-last">Precise control NOT needed</span>
+            </div>
+            <div class="ctrl-row">
+              <span class="ct p">P</span>
+              <span>Output proportional to error. May have steady-state offset.</span>
+              <span class="ctrl-last">Moderate precision</span>
+            </div>
+            <div class="ctrl-row">
+              <span class="ct pi">PI</span>
+              <span>P + eliminates steady-state offset (integral accumulates error).</span>
+              <span class="ctrl-last">No offset needed</span>
+            </div>
+            <div class="ctrl-row hl">
+              <span class="ct pid">PID</span>
+              <span>PI + reduces overshoot via derivative. Fastest settling time. Most precise.</span>
+              <span class="ctrl-last">Best precision</span>
+            </div>
+            <div class="ctrl-row">
+              <span class="ct mot">Motion</span>
+              <span>Tracks a moving setpoint. Shaft encoder feedback + PWM for speed control.</span>
+              <span class="ctrl-last">Robots, CNC machines</span>
+            </div>
+          </div>
+          <div class="keynote">
+            💡 <strong>Hysteresis</strong> = a dead band around setpoint. Prevents ON/OFF from switching too rapidly. Used only when precise control is NOT needed.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>⚔️ PLC vs DCS</h3>
+          <div class="compare">
+            <div class="compare-col">
+              <h4 class="plc-lbl">PLC</h4>
+              <ul>
+                <li>Factory / discrete automation</li>
+                <li>Replaced relay control panels</li>
+                <li>Modular, expandable rack</li>
+                <li>Ladder Logic programming</li>
+                <li>Cars, conveyors, robots</li>
+              </ul>
+            </div>
+            <div class="compare-col">
+              <h4 class="dcs-lbl">DCS</h4>
+              <ul>
+                <li>Process / continuous industries</li>
+                <li>Tight HMI integration</li>
+                <li>Engineering workstation config</li>
+                <li>Complex loop control</li>
+                <li>Oil refineries, water treatment</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH3 ═══════════════════════════ -->
+    <section id="ch3" class="chapter">
+      <div class="chapter-header ch3-header">
+        <div class="ch-number">03</div>
+        <div>
+          <h2>Introduction to PLC</h2>
+          <p class="ch-desc">Definition · History · 5 Components · Scan Cycle · Languages</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>💡 PLC Definition</h3>
+          <div class="defbox">
+            A <strong>digital electronic device</strong> that uses a <strong>programmable memory</strong> to store instructions for logic, sequence, timing, counting, and arithmetic — to control machines and processes.
+          </div>
+          <div class="defbox" style="border-color: #4ade80; margin-bottom:0;">
+            Also: continuously <strong>monitors input devices</strong> and makes decisions based on a custom program to control <strong>output devices</strong>.
+          </div>
+          <div style="margin-top:10px; font-size:12px; color:var(--muted);">
+            📅 First PLC: <strong style="color:var(--text)">MODICON 084 (1969)</strong> &nbsp;·&nbsp; Built to survive heat, dust, moisture, vibration
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔩 5 Main Components of a PLC</h3>
+          <div class="comp-grid">
+            <div class="comp-item"><span class="cn">1</span><div><strong>CPU</strong><small>Executes user program. Contains ALU + internal timers/counters/flags.</small></div></div>
+            <div class="comp-item"><span class="cn">2</span><div><strong>Memory</strong><small>Data Table + User Program + Housekeeping (3 sections).</small></div></div>
+            <div class="comp-item"><span class="cn">3</span><div><strong>I/O Interfaces</strong><small>Discrete (ON/OFF) or Analogue (4–20mA / 0–10V). Opto-isolated.</small></div></div>
+            <div class="comp-item"><span class="cn">4</span><div><strong>Power Supply</strong><small>Converts 120/240V AC → DC for all modules.</small></div></div>
+            <div class="comp-item"><span class="cn">5</span><div><strong>Programmer</strong><small>PC or handheld device to enter the program into memory.</small></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔄 PLC Scan Cycle — Repeats Forever</h3>
+          <div class="scan">
+            <div class="scan-step"><span class="sn">1</span><div><strong>Read Inputs</strong><p>Check each input (ON/OFF) → store in memory</p></div></div>
+            <div class="scan-arrow">↓</div>
+            <div class="scan-step"><span class="sn">2</span><div><strong>Execute Program</strong><p>Run ladder logic one instruction at a time using stored input values</p></div></div>
+            <div class="scan-arrow">↓</div>
+            <div class="scan-step"><span class="sn">3</span><div><strong>Update Outputs</strong><p>Send results to output devices</p></div></div>
+            <div class="scan-arrow">↺ repeat</div>
+          </div>
+          <div class="keynote">
+            ⚠️ <strong>Scan Time</strong> = time for one full cycle. If an input changes TWICE in one scan, the PLC may never detect it!
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📝 5 PLC Programming Languages (IEC 61131-3)</h3>
+          <div class="lang-list">
+            <div class="lang-item star"><span class="lang-rank">⭐</span><div><strong>LAD — Ladder Diagram</strong><small>Most common. Looks like relay wiring. Best for beginners and technicians.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">2</span><div><strong>FBD — Function Block Diagram</strong><small>Pictorial blocks connected with lines showing inputs/outputs.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">3</span><div><strong>SFC — Sequential Function Chart</strong><small>Flowchart style. Steps, actions, and transitions.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">4</span><div><strong>ST — Structured Text</strong><small>Like Pascal/BASIC. For software programmers.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">5</span><div><strong>IL — Instruction List</strong><small>Like Assembly language. Most complex.</small></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH4 ═══════════════════════════ -->
+    <section id="ch4" class="chapter">
+      <div class="chapter-header ch4-header">
+        <div class="ch-number">04</div>
+        <div>
+          <h2>PLC Programming</h2>
+          <p class="ch-desc">5-Step Design · I/O Addressing · Ladder Rules · Latching · Interlocking</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>📋 5-Step Design Process</h3>
+          <ol class="step-list">
+            <li><span class="sp">1</span><div><strong>Determine Sequence of Operation</strong> — Draw a flowchart of what the machine does</div></li>
+            <li><span class="sp">2</span><div><strong>Assign I/O Addresses</strong> — Label every sensor/actuator with an I or Q address. Do this BEFORE writing the program.</div></li>
+            <li><span class="sp">3</span><div><strong>Write the Ladder Program</strong> — Follow the control sequence from Step 1</div></li>
+            <li><span class="sp">4</span><div><strong>Download to PLC</strong> — Check coding errors, simulate if possible</div></li>
+            <li><span class="sp">5</span><div><strong>Run &amp; Test</strong> — Verify wiring, debug, test thoroughly before handing over</div></li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>🔌 I/O Addressing — Siemens S7-200 CPU 212</h3>
+          <div class="addr-table">
+            <div class="addr-row th"><span>ID</span><span>Area</span><span>Range</span></div>
+            <div class="addr-row"><span class="ac i">I</span><span>Digital Input (sensors)</span><code>I0.0 – I7.7</code></div>
+            <div class="addr-row"><span class="ac q">Q</span><span>Digital Output (actuators)</span><code>Q0.0 – Q7.7</code></div>
+            <div class="addr-row"><span class="ac m">M</span><span>Internal Memory bit (no physical device)</span><code>M0.0 – M15.7</code></div>
+            <div class="addr-row"><span class="ac t">T</span><span>Timer</span><code>T0 – T63</code></div>
+            <div class="addr-row"><span class="ac c">C</span><span>Counter</span><code>C0 – C63</code></div>
+          </div>
+        </div>
+
+        <div class="card full">
+          <h3>📊 Ladder Logic — Key Rules &amp; Symbols</h3>
+          <div class="sym-grid">
+            <div class="sym-card">
+              <span class="lsym no">─┤ ├─</span>
+              <strong>NO Contact (XIC)</strong>
+              <p>Normally Open. Closes when bit = 1. "Examine If Closed."</p>
+            </div>
+            <div class="sym-card">
+              <span class="lsym nc">─┤/├─</span>
+              <strong>NC Contact (XIO)</strong>
+              <p>Normally Closed. Opens when bit = 1. "Examine If Open."</p>
+            </div>
+            <div class="sym-card">
+              <span class="lsym co">─( )─</span>
+              <strong>Output Coil</strong>
+              <p>Energised when any left-to-right path is TRUE. ONE per rung.</p>
+            </div>
+          </div>
+          <div class="rules">
+            <div class="rule"><span class="ok">✓</span> Series contacts = AND logic</div>
+            <div class="rule"><span class="ok">✓</span> Parallel contacts = OR logic</div>
+            <div class="rule"><span class="ok">✓</span> Input contacts can appear multiple times</div>
+            <div class="rule"><span class="ok">✓</span> Current flows left → right, top → bottom</div>
+            <div class="rule"><span class="no2">✗</span> Output coils CANNOT be in series</div>
+            <div class="rule"><span class="no2">✗</span> Each output address can only appear ONCE</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔒 Latching vs Interlocking</h3>
+          <div class="compare">
+            <div class="compare-col">
+              <h4 class="latch-lbl">Latching</h4>
+              <p>Locks output ON even after input goes false.</p>
+              <p>Only released when <strong>UNLATCH coil</strong> is energised.</p>
+              <em>eg: motor start/stop seal-in circuit</em>
+            </div>
+            <div class="compare-col">
+              <h4 class="lock-lbl">Interlocking</h4>
+              <p>NC contact of Output A placed in rung of Output B (and vice versa).</p>
+              <p>Prevents two conflicting outputs from being ON simultaneously.</p>
+              <em>eg: motor FWD and REV cannot both be ON</em>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH5 ═══════════════════════════ -->
+    <section id="ch5" class="chapter">
+      <div class="chapter-header ch5-header">
+        <div class="ch-number">05</div>
+        <div>
+          <h2>Timers &amp; Counters</h2>
+          <p class="ch-desc">TON · TOF · 5 S7 Timer Types · Count Up/Down · S7 Specs</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card full">
+          <h3>⏱️ TON vs TOF — The Core Difference</h3>
+          <div class="timer-pair">
+            <div class="timer-card">
+              <span class="tbadge ton">TON — ON Delay</span>
+              <strong>Output turns ON <em>late</em></strong>
+              <p>▸ Input goes HIGH → wait delay T → Output ON</p>
+              <p>▸ Input goes LOW → Output OFF immediately</p>
+              <div class="tdiag">
+                <div class="tdiag-row">
+                  <span class="tlbl">IN</span>
+                  <div class="twave">
+                    <div class="tlow" style="width:20%"></div>
+                    <div class="thigh-b" style="width:60%"></div>
+                    <div class="tlow" style="width:20%"></div>
+                  </div>
+                </div>
+                <div class="tdiag-row">
+                  <span class="tlbl">Q</span>
+                  <div class="twave">
+                    <div class="tlow" style="width:36%"></div>
+                    <div class="thigh-b" style="width:44%"></div>
+                    <div class="tlow" style="width:20%"></div>
+                  </div>
+                </div>
+                <div class="tnote">↑ delay before Q goes ON ↑</div>
+              </div>
+            </div>
+            <div class="timer-card">
+              <span class="tbadge tof">TOF — OFF Delay</span>
+              <strong>Output turns OFF <em>late</em></strong>
+              <p>▸ Input goes HIGH → Output ON immediately</p>
+              <p>▸ Input goes LOW → wait delay T → Output OFF</p>
+              <div class="tdiag">
+                <div class="tdiag-row">
+                  <span class="tlbl">IN</span>
+                  <div class="twave">
+                    <div class="tlow" style="width:20%"></div>
+                    <div class="thigh-p" style="width:40%"></div>
+                    <div class="tlow" style="width:40%"></div>
+                  </div>
+                </div>
+                <div class="tdiag-row">
+                  <span class="tlbl">Q</span>
+                  <div class="twave">
+                    <div class="tlow" style="width:20%"></div>
+                    <div class="thigh-p" style="width:56%"></div>
+                    <div class="tlow" style="width:24%"></div>
+                  </div>
+                </div>
+                <div class="tnote">↑ delay before Q goes OFF ↑</div>
+              </div>
+            </div>
+          </div>
+          <div class="keynote">
+            🧠 <strong>Memory trick:</strong> &nbsp;TON = "Turn ON <em>late</em>" &nbsp;|&nbsp; TOF = "Turn OFF <em>late</em>"
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🗂️ S7 Timer Types (64 total: T0–T63)</h3>
+          <div class="timer-list">
+            <div class="trow"><code>S_Pulse</code> Pulse — active for fixed duration, ignores input length</div>
+            <div class="trow"><code>S_Pext</code> Extended Pulse — restarts if retriggered before expiry</div>
+            <div class="trow hl"><code>S_ODT</code> ON Delay Timer (TON) ★ most used</div>
+            <div class="trow"><code>S_ODTS</code> Retentive ON Delay — keeps accumulated time even if input drops</div>
+            <div class="trow hl"><code>S_OFFDT</code> OFF Delay Timer (TOF) ★ most used</div>
+          </div>
+          <div class="keynote" style="margin-top:10px;">
+            🔧 Timer rule: Timer instruction must be placed next to the <strong>RIGHT RAIL</strong> of a rung.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔢 Counters (S7: 64 total, C0–C63, range 0–999)</h3>
+          <div class="counter-grid">
+            <div class="counter-card">
+              <span class="cbadge cu">CU</span>
+              <strong>Count Up</strong>
+              <p>+1 on each rising edge. Stops at 999.</p>
+            </div>
+            <div class="counter-card">
+              <span class="cbadge cd">CD</span>
+              <strong>Count Down</strong>
+              <p>−1 on each rising edge. Stops at 0.</p>
+            </div>
+            <div class="counter-card">
+              <span class="cbadge ud">CU+CD</span>
+              <strong>Up / Down</strong>
+              <p>Dir=0 → count up. Dir=1 → count down.</p>
+            </div>
+          </div>
+          <div class="cpins">
+            <strong>Counter Pin Connections</strong>
+            <div class="pin-grid">
+              <span><code>CU</code> Count Up input</span>
+              <span><code>CD</code> Count Down input</span>
+              <span><code>S</code> Set — loads preset value</span>
+              <span><code>R</code> Reset → count = 0</span>
+              <span><code>PV</code> Preset Value (C#0–999)</span>
+              <span><code>Q</code> Output: 1 if count &gt; 0</span>
+              <span><code>BI</code> Current value (binary)</span>
+              <span><code>BCD</code> Current value (BCD)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>💡 Real-World Timer Examples</h3>
+          <div class="app-list">
+            <div class="app-item">
+              <span class="aicon">🚦</span>
+              <div>
+                <strong>Traffic Light Sequence</strong>
+                <small>Red 5s → Red+Amber 2s → Green 7s → Amber 2s → repeat (16s cycle)</small>
+              </div>
+            </div>
+            <div class="app-item">
+              <span class="aicon">🚪</span>
+              <div>
+                <strong>Automated Gate System</strong>
+                <small>Horn sounds 2s during movement + Flashing indicator + Motor interlocking</small>
+              </div>
+            </div>
+            <div class="app-item">
+              <span class="aicon">💡</span>
+              <div>
+                <strong>Flashing Lamp</strong>
+                <small>ON 5s → OFF 5s → repeat continuously (two cascaded timers)</small>
+              </div>
+            </div>
+            <div class="app-item">
+              <span class="aicon">📦</span>
+              <div>
+                <strong>Conveyor Box Counter</strong>
+                <small>After N boxes pass sensor, divert to alternate route (counter application)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ QUICK REF ═══════════════════════════ -->
+    <section id="qr" class="chapter">
+      <div class="chapter-header qr-header">
+        <div class="ch-number">⚡</div>
+        <div>
+          <h2>Quick Reference</h2>
+          <p class="ch-desc">Key Numbers · Definitions · Last-Minute Cheatsheet</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card full">
+          <h3>🔢 Numbers You MUST Remember</h3>
+          <div class="num-grid">
+            <div class="num-item"><span class="bignum">1969</span><small>First PLC (MODICON 084)</small></div>
+            <div class="num-item"><span class="bignum">3</span><small>Scan cycle steps</small></div>
+            <div class="num-item"><span class="bignum">5</span><small>PLC programming languages</small></div>
+            <div class="num-item"><span class="bignum">5</span><small>S7 timer types</small></div>
+            <div class="num-item"><span class="bignum">64</span><small>S7 timers (T0–T63)</small></div>
+            <div class="num-item"><span class="bignum">64</span><small>S7 counters (C0–C63)</small></div>
+            <div class="num-item"><span class="bignum">999</span><small>Max counter value</small></div>
+            <div class="num-item"><span class="bignum">16</span><small>Bits per timer/counter word</small></div>
+          </div>
+        </div>
+
+        <div class="card full">
+          <h3>📖 Key Definitions Cheatsheet</h3>
+          <div class="def-list">
+            <div class="def-item"><code>PLC</code> Digital computer for industrial process control using programmable memory</div>
+            <div class="def-item"><code>Scan Time</code> Time for one complete Read Inputs → Execute Program → Update Outputs cycle</div>
+            <div class="def-item"><code>TON</code> ON-Delay Timer — output turns ON after a set delay following input activation</div>
+            <div class="def-item"><code>TOF</code> OFF-Delay Timer — output turns OFF after a set delay following input deactivation</div>
+            <div class="def-item"><code>Latch</code> Lock output ON indefinitely — only released by explicit UNLATCH coil</div>
+            <div class="def-item"><code>Interlock</code> NC contact of Output A in rung of B — prevents conflicting simultaneous outputs</div>
+            <div class="def-item"><code>XIC</code> Examine If Closed — the NO contact instruction (bit must be 1)</div>
+            <div class="def-item"><code>XIO</code> Examine If Open — the NC contact instruction (bit must be 0)</div>
+            <div class="def-item"><code>RLO</code> Result of Logic Operation — logical result evaluated in a rung</div>
+            <div class="def-item"><code>Hysteresis</code> Dead band added to ON/OFF control to prevent rapid chattering</div>
+            <div class="def-item"><code>HMI</code> Human Machine Interface — operator display for process monitoring</div>
+            <div class="def-item"><code>PIQ</code> Process Output Image — PLC's internal memory table of all output states</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>MEK629 · Industrial Automation · UiTM · Dr Rosidah Sam</p>
+      <p class="sub">Simple notes for smart revision 🔧</p>
+    </footer>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
