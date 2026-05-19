@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEK629 — Industrial Automation Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Exo+2:wght@400;700;800&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0a0f1e;
+  --surface: #111827;
+  --surface2: #1c2333;
+  --border: #2d3748;
+  --text: #e2e8f0;
+  --muted: #718096;
+  --ch1: #ef4444;
+  --ch2: #f97316;
+  --ch3: #3b82f6;
+  --ch4: #22c55e;
+  --ch5: #a855f7;
+  --gold: #fbbf24;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* PROGRESS */
+#progress {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+  background: linear-gradient(90deg, #ef4444, #f97316, #3b82f6, #22c55e, #a855f7);
+  width: 0%; transition: width 0.1s linear;
+}
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, #0d1527, #111827);
+  border-bottom: 1px solid var(--border);
+  padding: 40px 32px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(59,130,246,.07) 0%, transparent 50%),
+    radial-gradient(circle at 80% 50%, rgba(168,85,247,.07) 0%, transparent 50%);
+}
+.header-inner { position: relative; z-index: 1; }
+.course-badge {
+  display: inline-block;
+  background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.3);
+  color: #79c0ff; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 4px; padding: 4px 14px;
+  border-radius: 2px; margin-bottom: 14px;
+}
+header h1 {
+  font-family: 'Audiowide', monospace;
+  font-size: clamp(1.6rem, 5vw, 2.8rem);
+  background: linear-gradient(135deg, #fff 0%, #79c0ff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; letter-spacing: 2px; margin-bottom: 8px;
+}
+.subtitle { color: var(--muted); font-size: 13px; letter-spacing: 1px; }
+.header-leds {
+  position: absolute; top: 18px; right: 22px;
+  display: flex; gap: 8px; align-items: center;
+}
+.led {
+  width: 10px; height: 10px; border-radius: 50%; display: block;
+}
+.led.red  { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.led.amber{ background: #f97316; box-shadow: 0 0 6px #f97316; }
+.led.green{ background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+/* LAYOUT */
+.layout { display: flex; max-width: 1400px; margin: 0 auto; }
+
+/* SIDEBAR */
+aside {
+  width: 210px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+}
+.sidebar-inner { padding: 24px 14px; }
+.sidebar-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; color: var(--muted);
+  margin-bottom: 12px; padding-left: 8px;
+}
+nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 6px;
+  text-decoration: none; color: var(--muted);
+  font-size: 13px; font-weight: 600;
+  transition: all .2s; border: 1px solid transparent;
+}
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid currentColor; flex-shrink: 0; transition: all .2s;
+}
+.nav-item.active .nav-dot { background: currentColor; box-shadow: 0 0 8px currentColor; }
+.ch1-link:hover,.ch1-link.active { color: var(--ch1); border-color: rgba(239,68,68,.2); background: rgba(239,68,68,.05); }
+.ch2-link:hover,.ch2-link.active { color: var(--ch2); border-color: rgba(249,115,22,.2); background: rgba(249,115,22,.05); }
+.ch3-link:hover,.ch3-link.active { color: var(--ch3); border-color: rgba(59,130,246,.2); background: rgba(59,130,246,.05); }
+.ch4-link:hover,.ch4-link.active { color: var(--ch4); border-color: rgba(34,197,94,.2); background: rgba(34,197,94,.05); }
+.ch5-link:hover,.ch5-link.active { color: var(--ch5); border-color: rgba(168,85,247,.2); background: rgba(168,85,247,.05); }
+.qr-link:hover,.qr-link.active  { color: var(--gold); border-color: rgba(251,191,36,.2); background: rgba(251,191,36,.05); }
+
+/* MAIN */
+main { flex: 1; min-width: 0; padding: 40px 32px; }
+
+/* CHAPTER */
+.chapter {
+  margin-bottom: 64px;
+  opacity: 0; transform: translateY(24px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.chapter.visible { opacity: 1; transform: translateY(0); }
+
+.chapter-header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px 24px; border-radius: 10px;
+  margin-bottom: 24px; border-left: 4px solid;
+}
+.ch1-header { background: rgba(239,68,68,.08);  border-color: var(--ch1); }
+.ch2-header { background: rgba(249,115,22,.08); border-color: var(--ch2); }
+.ch3-header { background: rgba(59,130,246,.08); border-color: var(--ch3); }
+.ch4-header { background: rgba(34,197,94,.08);  border-color: var(--ch4); }
+.ch5-header { background: rgba(168,85,247,.08); border-color: var(--ch5); }
+.qr-header  { background: rgba(251,191,36,.08); border-color: var(--gold); }
+
+.ch-number {
+  font-family: 'Audiowide', monospace;
+  font-size: 2.2rem; opacity: .35; line-height: 1; flex-shrink: 0;
+}
+.chapter-header h2 {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 1.5rem; font-weight: 800; margin-bottom: 4px;
+}
+.ch-desc { color: var(--muted); font-size: 12px; }
+
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+.card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.card:hover {
+  border-color: rgba(99,179,237,.25);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.card.full { grid-column: 1 / -1; }
+.card h3 {
+  font-family: 'Exo 2', sans-serif;
+  font-size: .95rem; font-weight: 700;
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* TIMELINE */
+.timeline { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.timeline li { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.ir { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono',monospace; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.ir1{background:#4a2020;color:#f87171} .ir2{background:#4a3020;color:#fb923c}
+.ir3{background:#3a3a1a;color:#fcd34d} .ir4{background:#1a3a2a;color:#4ade80}
+.ir5{background:#2a1a3a;color:#c084fc}
+
+/* TYPE GRID */
+.type-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.type-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px; text-align: center; font-size: 13px;
+}
+.type-card .icon { font-size: 1.4rem; display: block; margin-bottom: 6px; }
+.type-card strong { display: block; margin-bottom: 4px; }
+.type-card p { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.tag {
+  display: inline-block;
+  background: rgba(99,179,237,.1); color: #79c0ff;
+  font-size: 10px; padding: 2px 6px; border-radius: 3px;
+  font-family: 'JetBrains Mono',monospace;
+}
+
+/* PIPELINE */
+.pipeline {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; margin-top: 12px;
+}
+.pipe-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px;
+  flex: 1; min-width: 80px; text-align: center;
+}
+.pipe-step.hl { border-color: rgba(59,130,246,.4); background: rgba(59,130,246,.07); }
+.pipe-icon { font-size: 1.3rem; }
+.pipe-step strong { font-size: 12px; }
+.pipe-step small { font-size: 11px; color: var(--muted); }
+.arrow { color: var(--muted); font-size: 1.1rem; }
+
+/* BENEFIT LIST */
+.benefit-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.benefit-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; }
+.benefit-list .bi { font-size: 1.2rem; flex-shrink: 0; }
+
+/* DEFBOX */
+.defbox {
+  background: var(--surface); border-left: 3px solid #79c0ff;
+  border-radius: 0 6px 6px 0; padding: 12px 16px;
+  margin-bottom: 12px; font-size: 14px;
+}
+
+/* CONTROL TABLE */
+.ctrl-table { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.ctrl-row {
+  display: grid; grid-template-columns: 90px 1fr 130px;
+  gap: 12px; padding: 8px 10px; border-radius: 6px;
+  font-size: 13px; align-items: center;
+}
+.ctrl-row.th { font-size: 10px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; font-family: 'JetBrains Mono',monospace; }
+.ctrl-row:not(.th):hover { background: rgba(255,255,255,.03); }
+.ctrl-row.hl { background: rgba(34,197,94,.05); border: 1px solid rgba(34,197,94,.2); }
+.ct {
+  display: inline-block; padding: 3px 8px; border-radius: 4px;
+  font-family: 'JetBrains Mono',monospace; font-size: 11px; font-weight: 700;
+}
+.ct.onoff{background:rgba(239,68,68,.15);color:#f87171}
+.ct.p    {background:rgba(249,115,22,.15);color:#fb923c}
+.ct.pi   {background:rgba(251,191,36,.15);color:#fcd34d}
+.ct.pid  {background:rgba(34,197,94,.15);color:#4ade80}
+.ct.mot  {background:rgba(168,85,247,.15);color:#c084fc}
+
+/* KEY NOTE */
+.keynote {
+  background: rgba(251,191,36,.07); border: 1px solid rgba(251,191,36,.2);
+  border-radius: 6px; padding: 10px 14px; font-size: 13px; margin-top: 12px;
+}
+
+/* COMPARE */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+.compare-col {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px;
+}
+.compare-col h4 { font-family: 'Exo 2',sans-serif; margin-bottom: 10px; font-size: 14px; }
+.compare-col ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.compare-col li { font-size: 12px; color: var(--muted); }
+.compare-col li::before { content: "▸ "; color: var(--text); }
+.compare-col p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.compare-col em { font-size: 12px; color: #79c0ff; }
+.plc-lbl { color: var(--ch3); } .dcs-lbl { color: var(--ch2); }
+.latch-lbl { color: var(--ch5); } .lock-lbl { color: var(--ch4); }
+
+/* COMP GRID */
+.comp-grid { display: flex; flex-direction: column; gap: 8px; }
+.comp-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px; background: var(--surface); border-radius: 6px;
+}
+.cn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(59,130,246,.2); color: #79c0ff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono',monospace; font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.comp-item strong { font-size: 13px; display: block; }
+.comp-item small { font-size: 12px; color: var(--muted); }
+
+/* SCAN CYCLE */
+.scan { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 12px; }
+.scan-step {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 18px; width: 100%;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.sn {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(59,130,246,.2); color: #79c0ff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono',monospace; font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.scan-step strong { font-size: 13px; display: block; }
+.scan-step p { font-size: 12px; color: var(--muted); }
+.scan-arrow { color: var(--muted); font-size: .95rem; text-align: center; }
+
+/* LANG LIST */
+.lang-list { display: flex; flex-direction: column; gap: 8px; }
+.lang-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px; border-radius: 6px;
+  background: var(--surface); border: 1px solid var(--border); font-size: 13px;
+}
+.lang-item.star { border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.05); }
+.lang-rank { width: 24px; text-align: center; flex-shrink: 0; font-family: 'JetBrains Mono',monospace; font-size: 11px; color: var(--muted); }
+.lang-item strong { display: block; }
+.lang-item small { color: var(--muted); }
+
+/* STEP LIST */
+.step-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.step-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; }
+.sp {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(34,197,94,.2); color: #4ade80;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono',monospace; font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ADDR TABLE */
+.addr-table { display: flex; flex-direction: column; gap: 4px; }
+.addr-row {
+  display: grid; grid-template-columns: 60px 1fr auto;
+  gap: 12px; padding: 8px 10px; border-radius: 6px;
+  font-size: 13px; align-items: center;
+}
+.addr-row.th { font-size: 10px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; font-family: 'JetBrains Mono',monospace; }
+.addr-row:not(.th):hover { background: rgba(255,255,255,.03); }
+.ac {
+  display: inline-block; padding: 3px 8px; border-radius: 4px;
+  font-family: 'JetBrains Mono',monospace; font-size: 13px; font-weight: 700;
+}
+.ac.i {background:rgba(239,68,68,.15);color:#f87171}
+.ac.q {background:rgba(34,197,94,.15);color:#4ade80}
+.ac.m {background:rgba(249,115,22,.15);color:#fb923c}
+.ac.t {background:rgba(168,85,247,.15);color:#c084fc}
+.ac.c {background:rgba(59,130,246,.15);color:#79c0ff}
+code {
+  font-family: 'JetBrains Mono',monospace;
+  background: rgba(255,255,255,.08); padding: 1px 5px;
+  border-radius: 3px; font-size: 12px;
+}
+
+/* LADDER SYMBOLS */
+.sym-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+.sym-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; text-align: center;
+}
+.lsym {
+  font-family: 'JetBrains Mono',monospace; font-size: 1.3rem;
+  padding: 8px; border-radius: 4px; margin-bottom: 8px; display: block; letter-spacing: 2px;
+}
+.lsym.no { background: rgba(59,130,246,.1); color: #79c0ff; }
+.lsym.nc { background: rgba(239,68,68,.1); color: #f87171; }
+.lsym.co { background: rgba(34,197,94,.1); color: #4ade80; }
+.sym-card strong { font-size: 13px; display: block; margin-bottom: 4px; }
+.sym-card p { font-size: 12px; color: var(--muted); }
+
+.rules { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rule {
+  display: flex; align-items: center; gap: 8px; font-size: 13px;
+  padding: 6px 10px; background: var(--surface); border-radius: 4px;
+}
+.ok { color: #4ade80; } .no2 { color: #f87171; }
+
+/* TIMERS */
+.timer-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+.timer-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; font-size: 13px;
+}
+.tbadge {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-family: 'JetBrains Mono',monospace; font-size: 12px; font-weight: 700; margin-bottom: 8px;
+}
+.tbadge.ton { background: rgba(59,130,246,.2); color: #79c0ff; }
+.tbadge.tof { background: rgba(168,85,247,.2); color: #c084fc; }
+.timer-card strong { display: block; margin-bottom: 6px; font-size: 14px; }
+.timer-card p { color: var(--muted); margin-bottom: 4px; font-size: 12px; }
+
+/* TIMING DIAGRAM */
+.tdiag { margin-top: 10px; }
+.tdiag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.tlbl { font-family: 'JetBrains Mono',monospace; font-size: 10px; color: var(--muted); width: 20px; flex-shrink: 0; }
+.twave { display: flex; height: 14px; flex: 1; border-radius: 2px; overflow: hidden; }
+.tlow { background: #1e2a3a; }
+.thigh-b { background: #3b82f6; }
+.thigh-p { background: #a855f7; }
+.tnote { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono',monospace; text-align: center; margin-top: 3px; }
+
+/* TIMER LIST */
+.timer-list { display: flex; flex-direction: column; gap: 6px; }
+.trow {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 10px; border-radius: 6px;
+  font-size: 13px; background: var(--surface);
+}
+.trow.hl { background: rgba(59,130,246,.05); border: 1px solid rgba(59,130,246,.2); }
+.trow code { min-width: 64px; text-align: center; }
+
+/* COUNTERS */
+.counter-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 14px; }
+.counter-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; text-align: center; font-size: 13px;
+}
+.cbadge {
+  display: inline-block; padding: 3px 10px; border-radius: 4px;
+  font-family: 'JetBrains Mono',monospace; font-size: 12px; font-weight: 700; margin-bottom: 8px;
+}
+.cbadge.cu{background:rgba(34,197,94,.2);color:#4ade80}
+.cbadge.cd{background:rgba(239,68,68,.2);color:#f87171}
+.cbadge.ud{background:rgba(168,85,247,.2);color:#c084fc}
+.counter-card strong { display: block; margin-bottom: 4px; }
+.counter-card p { font-size: 12px; color: var(--muted); }
+
+.cpins { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.cpins strong { display: block; font-size: 13px; margin-bottom: 10px; }
+.pin-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; }
+.pin-grid span { font-size: 12px; color: var(--muted); }
+
+/* APP LIST */
+.app-list { display: flex; flex-direction: column; gap: 10px; }
+.app-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px; background: var(--surface); border-radius: 6px;
+}
+.aicon { font-size: 1.4rem; flex-shrink: 0; }
+.app-item strong { display: block; font-size: 13px; }
+.app-item small { font-size: 12px; color: var(--muted); }
+
+/* QUICK REF NUMBERS */
+.num-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.num-item {
+  text-align: center; background: var(--surface);
+  border-radius: 8px; padding: 14px 8px; border: 1px solid var(--border);
+}
+.bignum {
+  display: block; font-family: 'Audiowide',monospace; font-size: 1.6rem;
+  background: linear-gradient(135deg, #79c0ff, #c084fc);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 4px;
+}
+.num-item small { font-size: 11px; color: var(--muted); }
+
+/* DEF LIST */
+.def-list { display: flex; flex-direction: column; gap: 6px; }
+.def-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 8px 10px; border-radius: 6px; font-size: 13px;
+  background: var(--surface);
+}
+.def-item code { background: rgba(168,85,247,.15); color: #c084fc; min-width: 70px; text-align: center; flex-shrink: 0; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 0 16px; text-align: center;
+  color: var(--muted); font-size: 13px; margin-top: 32px;
+}
+footer .sub { margin-top: 4px; font-size: 11px; opacity: .5; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ═══════════ LADDER DIAGRAM STYLES ═══════════ */
+.lad-example {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px 12px;
+  margin-bottom: 12px;
+}
+.lad-example:last-child { margin-bottom: 0; }
+
+.lad-title {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.lad-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; padding: 1px 7px; border-radius: 3px;
+  font-weight: 700; letter-spacing: 0.5px;
+}
+.lad-tag.basic   { background: rgba(59,130,246,.2);  color: #79c0ff; }
+.lad-tag.latch   { background: rgba(168,85,247,.2);  color: #c084fc; }
+.lad-tag.ilock   { background: rgba(239,68,68,.2);   color: #f87171; }
+.lad-tag.timer   { background: rgba(251,191,36,.2);  color: #fbbf24; }
+
+.lad-desc {
+  font-size: 11px; color: var(--muted);
+  margin-bottom: 10px; line-height: 1.5;
+}
+
+.lad-svg-wrap {
+  background: #060d1a;
+  border: 1px solid rgba(99,179,237,.12);
+  border-radius: 6px;
+  padding: 10px 14px 6px;
+  overflow-x: auto;
+}
+.lad-svg-wrap svg { display: block; }
+
+.lad-truth {
+  margin-top: 8px;
+  font-size: 11px; color: var(--muted);
+  display: flex; gap: 16px; flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+}
+.lad-truth span { display: flex; align-items: center; gap: 5px; }
+.dot-on  { width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 4px #4ade80; display:inline-block; flex-shrink:0; }
+.dot-off { width:7px;height:7px;border-radius:50%;background:#f87171;box-shadow:0 0 4px #f87171; display:inline-block; flex-shrink:0; }
+
+.lad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  aside { display: none; }
+  main { padding: 20px 14px; }
+  .type-grid { grid-template-columns: 1fr; }
+  .timer-pair { grid-template-columns: 1fr; }
+  .counter-grid { grid-template-columns: 1fr; }
+  .sym-grid { grid-template-columns: 1fr; }
+  .rules { grid-template-columns: 1fr; }
+  .compare { grid-template-columns: 1fr; }
+  .num-grid { grid-template-columns: repeat(2,1fr); }
+  .cards { grid-template-columns: 1fr; }
+  .ctrl-row { grid-template-columns: 80px 1fr; }
+  .ctrl-row .ctrl-last { display: none; }
+  .pipeline { flex-direction: column; }
+  .chapter-header { flex-direction: column; text-align: center; }
+  .lad-grid { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header>
+  <div class="header-leds">
+    <span class="led red"></span>
+    <span class="led amber"></span>
+    <span class="led green"></span>
+  </div>
+  <div class="header-inner">
+    <div class="course-badge">MEK629</div>
+    <h1>Industrial Automation</h1>
+    <p class="subtitle">Nota Kuliah &nbsp;·&nbsp; Quick Revision &nbsp;·&nbsp; Dr Rosidah Sam &nbsp;·&nbsp; UiTM</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside>
+    <div class="sidebar-inner">
+      <p class="sidebar-label">CHAPTERS</p>
+      <nav>
+        <a href="#ch1" class="nav-item ch1-link"><span class="nav-dot"></span>01 · Automation</a>
+        <a href="#ch2" class="nav-item ch2-link"><span class="nav-dot"></span>02 · Controllers</a>
+        <a href="#ch3" class="nav-item ch3-link"><span class="nav-dot"></span>03 · PLC Intro</a>
+        <a href="#ch4" class="nav-item ch4-link"><span class="nav-dot"></span>04 · Programming</a>
+        <a href="#ch5" class="nav-item ch5-link"><span class="nav-dot"></span>05 · Timers &amp; Counters</a>
+        <a href="#qr"  class="nav-item qr-link" ><span class="nav-dot"></span>⚡ Quick Ref</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ═══════════════════════════ CH1 ═══════════════════════════ -->
+    <section id="ch1" class="chapter">
+      <div class="chapter-header ch1-header">
+        <div class="ch-number">01</div>
+        <div>
+          <h2>Introduction to Automation</h2>
+          <p class="ch-desc">Industry Revolution → Types → Core Elements → Benefits</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <h3>🏭 Industry Revolution Timeline</h3>
+          <ul class="timeline">
+            <li><span class="ir ir1">IR 1.0</span> ~1800 · Steam power + Mechanization</li>
+            <li><span class="ir ir2">IR 2.0</span> ~1900 · Electricity + Assembly lines</li>
+            <li><span class="ir ir3">IR 3.0</span> ~2000 · Computers + Robotics</li>
+            <li><span class="ir ir4">IR 4.0</span> 2013+ · IoT + Cyber-physical systems</li>
+            <li><span class="ir ir5">IR 5.0</span> 2020+ · Human-Robot collaboration</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚙️ 3 Types of Automation</h3>
+          <div class="type-grid">
+            <div class="type-card">
+              <span class="icon">🔒</span>
+              <strong>Fixed</strong>
+              <p>High-volume, single product. Max efficiency. Inflexible.</p>
+              <span class="tag">10K–1M units</span>
+            </div>
+            <div class="type-card">
+              <span class="icon">🔄</span>
+              <strong>Programmable</strong>
+              <p>Reprogrammable for batches. Flexible to product changes.</p>
+              <span class="tag">1–100 units</span>
+            </div>
+            <div class="type-card">
+              <span class="icon">🎯</span>
+              <strong>Flexible</strong>
+              <p>Central computer routes parts. Handles variety quickly.</p>
+              <span class="tag">100–10K units</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🔗 3 Core Elements of Automation</h3>
+          <div class="pipeline">
+            <div class="pipe-step"><span class="pipe-icon">📡</span><strong>Sensors</strong><small>Physical → electrical signal</small></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step hl"><span class="pipe-icon">🧠</span><strong>Controller (PLC)</strong><small>Receives, decides, commands</small></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step"><span class="pipe-icon">⚡</span><strong>Actuators</strong><small>Execute physical actions</small></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>✅ 5 Benefits of Automation</h3>
+          <ul class="benefit-list">
+            <li><span class="bi">📏</span><div><strong>Consistency</strong> — no "off" days, predictable output</div></li>
+            <li><span class="bi">💰</span><div><strong>Cost Reduction</strong> — less labour, less waste</div></li>
+            <li><span class="bi">🚀</span><div><strong>Productivity</strong> — 24/7 operation at constant speed</div></li>
+            <li><span class="bi">🎯</span><div><strong>Quality</strong> — less variability than human workers</div></li>
+            <li><span class="bi">🛡️</span><div><strong>Safety</strong> — removes workers from hazardous tasks</div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH2 ═══════════════════════════ -->
+    <section id="ch2" class="chapter">
+      <div class="chapter-header ch2-header">
+        <div class="ch-number">02</div>
+        <div>
+          <h2>Controllers</h2>
+          <p class="ch-desc">Control Actions · ON/OFF · PID · Motion · PLC vs DCS</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <h3>🧠 What is a Controller?</h3>
+          <div class="defbox">The <strong>brain of a control system</strong> — receives sensor data, compares with setpoint, makes decisions, and commands actuators.</div>
+          <div class="pipeline">
+            <div class="pipe-step"><strong>Input</strong></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step hl"><strong>Controller</strong></div>
+            <span class="arrow">→</span>
+            <div class="pipe-step"><strong>Actuator → Process</strong></div>
+            <span class="arrow">↺</span>
+            <div class="pipe-step"><strong>Feedback</strong></div>
+          </div>
+        </div>
+        <div class="card full">
+          <h3>🎛️ Types of Control Actions</h3>
+          <div class="ctrl-table">
+            <div class="ctrl-row th"><span>Type</span><span>Behaviour</span><span class="ctrl-last">Use When</span></div>
+            <div class="ctrl-row"><span class="ct onoff">ON/OFF</span><span>Fully ON or OFF only. Add <strong>hysteresis</strong> to stop chattering (rapid switching).</span><span class="ctrl-last">Precise control NOT needed</span></div>
+            <div class="ctrl-row"><span class="ct p">P</span><span>Output proportional to error. May have steady-state offset.</span><span class="ctrl-last">Moderate precision</span></div>
+            <div class="ctrl-row"><span class="ct pi">PI</span><span>P + eliminates steady-state offset (integral accumulates error).</span><span class="ctrl-last">No offset needed</span></div>
+            <div class="ctrl-row hl"><span class="ct pid">PID</span><span>PI + reduces overshoot via derivative. Fastest settling time. Most precise.</span><span class="ctrl-last">Best precision</span></div>
+            <div class="ctrl-row"><span class="ct mot">Motion</span><span>Tracks a moving setpoint. Shaft encoder feedback + PWM for speed control.</span><span class="ctrl-last">Robots, CNC machines</span></div>
+          </div>
+          <div class="keynote">💡 <strong>Hysteresis</strong> = a dead band around setpoint. Prevents ON/OFF from switching too rapidly. Used only when precise control is NOT needed.</div>
+        </div>
+        <div class="card">
+          <h3>⚔️ PLC vs DCS</h3>
+          <div class="compare">
+            <div class="compare-col">
+              <h4 class="plc-lbl">PLC</h4>
+              <ul>
+                <li>Factory / discrete automation</li>
+                <li>Replaced relay control panels</li>
+                <li>Modular, expandable rack</li>
+                <li>Ladder Logic programming</li>
+                <li>Cars, conveyors, robots</li>
+              </ul>
+            </div>
+            <div class="compare-col">
+              <h4 class="dcs-lbl">DCS</h4>
+              <ul>
+                <li>Process / continuous industries</li>
+                <li>Tight HMI integration</li>
+                <li>Engineering workstation config</li>
+                <li>Complex loop control</li>
+                <li>Oil refineries, water treatment</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH3 ═══════════════════════════ -->
+    <section id="ch3" class="chapter">
+      <div class="chapter-header ch3-header">
+        <div class="ch-number">03</div>
+        <div>
+          <h2>Introduction to PLC</h2>
+          <p class="ch-desc">Definition · History · 5 Components · Scan Cycle · Languages</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <h3>💡 PLC Definition</h3>
+          <div class="defbox">A <strong>digital electronic device</strong> that uses a <strong>programmable memory</strong> to store instructions for logic, sequence, timing, counting, and arithmetic — to control machines and processes.</div>
+          <div class="defbox" style="border-color: #4ade80; margin-bottom:0;">Also: continuously <strong>monitors input devices</strong> and makes decisions based on a custom program to control <strong>output devices</strong>.</div>
+          <div style="margin-top:10px; font-size:12px; color:var(--muted);">📅 First PLC: <strong style="color:var(--text)">MODICON 084 (1969)</strong> &nbsp;·&nbsp; Built to survive heat, dust, moisture, vibration</div>
+        </div>
+        <div class="card">
+          <h3>🔩 5 Main Components of a PLC</h3>
+          <div class="comp-grid">
+            <div class="comp-item"><span class="cn">1</span><div><strong>CPU</strong><small>Executes user program. Contains ALU + internal timers/counters/flags.</small></div></div>
+            <div class="comp-item"><span class="cn">2</span><div><strong>Memory</strong><small>Data Table + User Program + Housekeeping (3 sections).</small></div></div>
+            <div class="comp-item"><span class="cn">3</span><div><strong>I/O Interfaces</strong><small>Discrete (ON/OFF) or Analogue (4–20mA / 0–10V). Opto-isolated.</small></div></div>
+            <div class="comp-item"><span class="cn">4</span><div><strong>Power Supply</strong><small>Converts 120/240V AC → DC for all modules.</small></div></div>
+            <div class="comp-item"><span class="cn">5</span><div><strong>Programmer</strong><small>PC or handheld device to enter the program into memory.</small></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>🔄 PLC Scan Cycle — Repeats Forever</h3>
+          <div class="scan">
+            <div class="scan-step"><span class="sn">1</span><div><strong>Read Inputs</strong><p>Check each input (ON/OFF) → store in memory</p></div></div>
+            <div class="scan-arrow">↓</div>
+            <div class="scan-step"><span class="sn">2</span><div><strong>Execute Program</strong><p>Run ladder logic one instruction at a time using stored input values</p></div></div>
+            <div class="scan-arrow">↓</div>
+            <div class="scan-step"><span class="sn">3</span><div><strong>Update Outputs</strong><p>Send results to output devices</p></div></div>
+            <div class="scan-arrow">↺ repeat</div>
+          </div>
+          <div class="keynote">⚠️ <strong>Scan Time</strong> = time for one full cycle. If an input changes TWICE in one scan, the PLC may never detect it!</div>
+        </div>
+        <div class="card">
+          <h3>📝 5 PLC Programming Languages (IEC 61131-3)</h3>
+          <div class="lang-list">
+            <div class="lang-item star"><span class="lang-rank">⭐</span><div><strong>LAD — Ladder Diagram</strong><small>Most common. Looks like relay wiring. Best for beginners and technicians.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">2</span><div><strong>FBD — Function Block Diagram</strong><small>Pictorial blocks connected with lines showing inputs/outputs.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">3</span><div><strong>SFC — Sequential Function Chart</strong><small>Flowchart style. Steps, actions, and transitions.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">4</span><div><strong>ST — Structured Text</strong><small>Like Pascal/BASIC. For software programmers.</small></div></div>
+            <div class="lang-item"><span class="lang-rank">5</span><div><strong>IL — Instruction List</strong><small>Like Assembly language. Most complex.</small></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH4 ═══════════════════════════ -->
+    <section id="ch4" class="chapter">
+      <div class="chapter-header ch4-header">
+        <div class="ch-number">04</div>
+        <div>
+          <h2>PLC Programming</h2>
+          <p class="ch-desc">5-Step Design · I/O Addressing · Ladder Rules · Latching · Interlocking</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card">
+          <h3>📋 5-Step Design Process</h3>
+          <ol class="step-list">
+            <li><span class="sp">1</span><div><strong>Determine Sequence of Operation</strong> — Draw a flowchart of what the machine does</div></li>
+            <li><span class="sp">2</span><div><strong>Assign I/O Addresses</strong> — Label every sensor/actuator with an I or Q address. Do this BEFORE writing the program.</div></li>
+            <li><span class="sp">3</span><div><strong>Write the Ladder Program</strong> — Follow the control sequence from Step 1</div></li>
+            <li><span class="sp">4</span><div><strong>Download to PLC</strong> — Check coding errors, simulate if possible</div></li>
+            <li><span class="sp">5</span><div><strong>Run &amp; Test</strong> — Verify wiring, debug, test thoroughly before handing over</div></li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>🔌 I/O Addressing — Siemens S7-200 CPU 212</h3>
+          <div class="addr-table">
+            <div class="addr-row th"><span>ID</span><span>Area</span><span>Range</span></div>
+            <div class="addr-row"><span class="ac i">I</span><span>Digital Input (sensors)</span><code>I0.0 – I7.7</code></div>
+            <div class="addr-row"><span class="ac q">Q</span><span>Digital Output (actuators)</span><code>Q0.0 – Q7.7</code></div>
+            <div class="addr-row"><span class="ac m">M</span><span>Internal Memory bit (no physical device)</span><code>M0.0 – M15.7</code></div>
+            <div class="addr-row"><span class="ac t">T</span><span>Timer</span><code>T0 – T63</code></div>
+            <div class="addr-row"><span class="ac c">C</span><span>Counter</span><code>C0 – C63</code></div>
+          </div>
+        </div>
+
+        <div class="card full">
+          <h3>📊 Ladder Logic — Key Rules &amp; Symbols</h3>
+          <div class="sym-grid">
+            <div class="sym-card">
+              <span class="lsym no">─┤ ├─</span>
+              <strong>NO Contact (XIC)</strong>
+              <p>Normally Open. Closes when bit = 1. "Examine If Closed."</p>
+            </div>
+            <div class="sym-card">
+              <span class="lsym nc">─┤/├─</span>
+              <strong>NC Contact (XIO)</strong>
+              <p>Normally Closed. Opens when bit = 1. "Examine If Open."</p>
+            </div>
+            <div class="sym-card">
+              <span class="lsym co">─( )─</span>
+              <strong>Output Coil</strong>
+              <p>Energised when any left-to-right path is TRUE. ONE per rung.</p>
+            </div>
+          </div>
+          <div class="rules">
+            <div class="rule"><span class="ok">✓</span> Series contacts = AND logic</div>
+            <div class="rule"><span class="ok">✓</span> Parallel contacts = OR logic</div>
+            <div class="rule"><span class="ok">✓</span> Input contacts can appear multiple times</div>
+            <div class="rule"><span class="ok">✓</span> Current flows left → right, top → bottom</div>
+            <div class="rule"><span class="no2">✗</span> Output coils CANNOT be in series</div>
+            <div class="rule"><span class="no2">✗</span> Each output address can only appear ONCE</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🔒 Latching vs Interlocking</h3>
+          <div class="compare">
+            <div class="compare-col">
+              <h4 class="latch-lbl">Latching</h4>
+              <p>Locks output ON even after input goes false.</p>
+              <p>Only released when <strong>UNLATCH coil</strong> is energised.</p>
+              <em>eg: motor start/stop seal-in circuit</em>
+            </div>
+            <div class="compare-col">
+              <h4 class="lock-lbl">Interlocking</h4>
+              <p>NC contact of Output A placed in rung of Output B (and vice versa).</p>
+              <p>Prevents two conflicting outputs from being ON simultaneously.</p>
+              <em>eg: motor FWD and REV cannot both be ON</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ NEW CARD: LADDER DIAGRAM EXAMPLES ═══ -->
+        <div class="card full">
+          <h3>🪜 Ladder Diagram Examples</h3>
+
+          <div class="lad-grid">
+
+            <!-- EXAMPLE 1: Basic AND rung -->
+            <div class="lad-example">
+              <div class="lad-title">
+                Example 1 — Basic AND Logic
+                <span class="lad-tag basic">SERIES</span>
+              </div>
+              <div class="lad-desc">
+                Motor (Q0.0) runs only when <strong>both</strong> Start button (I0.0) AND Safety switch (I0.1) are ON.
+                Two NO contacts in series = AND gate.
+              </div>
+              <div class="lad-svg-wrap">
+                <!-- SVG: left rail | ─┤I0.0├─ ─┤I0.1├─ ────────────(Q0.0)─ | right rail -->
+                <svg width="460" height="80" viewBox="0 0 460 80" xmlns="http://www.w3.org/2000/svg"
+                     font-family="'JetBrains Mono', monospace" font-size="11">
+
+                  <!-- Left power rail -->
+                  <line x1="18" y1="8" x2="18" y2="72" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+                  <!-- Right power rail -->
+                  <line x1="442" y1="8" x2="442" y2="72" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- Rung horizontal wire, split around contacts and coil -->
+                  <!-- Left segment: rail → contact 1 -->
+                  <line x1="18" y1="40" x2="88" y2="40" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Between contacts -->
+                  <line x1="148" y1="40" x2="218" y2="40" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Contact 2 → coil -->
+                  <line x1="278" y1="40" x2="352" y2="40" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Coil → right rail -->
+                  <line x1="402" y1="40" x2="442" y2="40" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- ── NO Contact 1 (I0.0) ── -->
+                  <!-- Left leg -->
+                  <line x1="88" y1="28" x2="88" y2="52" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Right leg -->
+                  <line x1="148" y1="28" x2="148" y2="52" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Top connecting wire (closed symbol) -->
+                  <line x1="88" y1="28" x2="148" y2="28" stroke="#79c0ff" stroke-width="2"/>
+                  <!-- Address label above -->
+                  <text x="118" y="18" fill="#f87171" text-anchor="middle" font-size="10">I0.0</text>
+                  <!-- Description below -->
+                  <text x="118" y="66" fill="#718096" text-anchor="middle" font-size="9">START</text>
+
+                  <!-- ── NO Contact 2 (I0.1) ── -->
+                  <line x1="218" y1="28" x2="218" y2="52" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="278" y1="28" x2="278" y2="52" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="218" y1="28" x2="278" y2="28" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="248" y="18" fill="#f87171" text-anchor="middle" font-size="10">I0.1</text>
+                  <text x="248" y="66" fill="#718096" text-anchor="middle" font-size="9">SAFETY</text>
+
+                  <!-- ── Output Coil (Q0.0) ── -->
+                  <!-- Left wire stub -->
+                  <line x1="352" y1="40" x2="362" y2="40" stroke="#4ade80" stroke-width="2"/>
+                  <!-- Circle -->
+                  <circle cx="377" cy="40" r="15" fill="none" stroke="#4ade80" stroke-width="2"/>
+                  <!-- Right wire stub -->
+                  <line x1="392" y1="40" x2="402" y2="40" stroke="#4ade80" stroke-width="2"/>
+                  <text x="377" y="18" fill="#4ade80" text-anchor="middle" font-size="10">Q0.0</text>
+                  <text x="377" y="66" fill="#718096" text-anchor="middle" font-size="9">MOTOR</text>
+
+                  <!-- Rung number -->
+                  <text x="4" y="43" fill="#2d3748" text-anchor="middle" font-size="9">1</text>
+                </svg>
+              </div>
+              <div class="lad-truth">
+                <span><span class="dot-on"></span> I0.0=1 &amp; I0.1=1 → Q0.0 ON</span>
+                <span><span class="dot-off"></span> Either = 0 → Q0.0 OFF</span>
+              </div>
+            </div>
+
+            <!-- EXAMPLE 2: OR logic (parallel) -->
+            <div class="lad-example">
+              <div class="lad-title">
+                Example 2 — Basic OR Logic
+                <span class="lad-tag basic">PARALLEL</span>
+              </div>
+              <div class="lad-desc">
+                Alarm (Q0.1) triggers when <strong>either</strong> Sensor A (I0.0) OR Sensor B (I0.1) is ON.
+                Two NO contacts in parallel = OR gate.
+              </div>
+              <div class="lad-svg-wrap">
+                <svg width="360" height="100" viewBox="0 0 360 100" xmlns="http://www.w3.org/2000/svg"
+                     font-family="'JetBrains Mono', monospace" font-size="11">
+
+                  <!-- Power rails -->
+                  <line x1="18" y1="8" x2="18" y2="92" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="342" y1="8" x2="342" y2="92" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- Vertical bus left (join point) -->
+                  <line x1="18" y1="30" x2="70" y2="30" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="18" y1="70" x2="70" y2="70" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="70" y1="30" x2="70" y2="70" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- Vertical bus right (join point) -->
+                  <line x1="220" y1="30" x2="252" y2="30" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="220" y1="70" x2="252" y2="70" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="252" y1="30" x2="252" y2="70" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- Upper branch: left bus → NO contact I0.0 → right bus -->
+                  <line x1="70" y1="30" x2="90" y2="30" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="90" y1="18" x2="90" y2="42" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="150" y1="18" x2="150" y2="42" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="90" y1="18" x2="150" y2="18" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="150" y1="30" x2="220" y2="30" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="120" y="12" fill="#f87171" text-anchor="middle" font-size="10">I0.0</text>
+                  <text x="120" y="54" fill="#718096" text-anchor="middle" font-size="9">SENSOR A</text>
+
+                  <!-- Lower branch: left bus → NO contact I0.1 → right bus -->
+                  <line x1="70" y1="70" x2="90" y2="70" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="90" y1="58" x2="90" y2="82" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="150" y1="58" x2="150" y2="82" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="90" y1="58" x2="150" y2="58" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="150" y1="70" x2="220" y2="70" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="120" y="94" fill="#718096" text-anchor="middle" font-size="9">SENSOR B</text>
+                  <text x="120" y="52" fill="#f87171" text-anchor="middle" font-size="10">I0.1</text>
+
+                  <!-- Wire from right bus to coil -->
+                  <line x1="252" y1="50" x2="268" y2="50" stroke="#4ade80" stroke-width="2"/>
+                  <!-- Coil circle -->
+                  <circle cx="283" cy="50" r="15" fill="none" stroke="#4ade80" stroke-width="2"/>
+                  <!-- Wire from coil to right rail -->
+                  <line x1="298" y1="50" x2="342" y2="50" stroke="#4ade80" stroke-width="2"/>
+
+                  <text x="283" y="18" fill="#4ade80" text-anchor="middle" font-size="10">Q0.1</text>
+                  <text x="283" y="94" fill="#718096" text-anchor="middle" font-size="9">ALARM</text>
+
+                  <text x="4" y="53" fill="#2d3748" text-anchor="middle" font-size="9">1</text>
+                </svg>
+              </div>
+              <div class="lad-truth">
+                <span><span class="dot-on"></span> I0.0=1 OR I0.1=1 → Q0.1 ON</span>
+                <span><span class="dot-off"></span> Both = 0 → Q0.1 OFF</span>
+              </div>
+            </div>
+
+            <!-- EXAMPLE 3: Seal-in / Latch (motor start-stop) -->
+            <div class="lad-example">
+              <div class="lad-title">
+                Example 3 — Seal-in (Latch) Circuit
+                <span class="lad-tag latch">LATCH</span>
+              </div>
+              <div class="lad-desc">
+                Classic motor start/stop. Press START (I0.0) → Motor (Q0.0) latches ON via its own contact.
+                Motor stays ON until STOP (I0.1 NC) is pressed. Q0.0 contact in parallel = <strong>seal-in</strong>.
+              </div>
+              <div class="lad-svg-wrap">
+                <svg width="460" height="110" viewBox="0 0 460 110" xmlns="http://www.w3.org/2000/svg"
+                     font-family="'JetBrains Mono', monospace" font-size="11">
+
+                  <!-- Power rails -->
+                  <line x1="18" y1="8" x2="18" y2="102" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="442" y1="8" x2="442" y2="102" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- Left bus join for parallel (START / seal-in) -->
+                  <line x1="18" y1="35" x2="60" y2="35" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="18" y1="75" x2="60" y2="75" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="60" y1="35" x2="60" y2="75" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- Right join for parallel -->
+                  <line x1="190" y1="35" x2="210" y2="35" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="190" y1="75" x2="210" y2="75" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="210" y1="35" x2="210" y2="75" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- Upper branch: START button NO (I0.0) -->
+                  <line x1="60" y1="35" x2="80" y2="35" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="80" y1="23" x2="80" y2="47" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="140" y1="23" x2="140" y2="47" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="80" y1="23" x2="140" y2="23" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="140" y1="35" x2="190" y2="35" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="110" y="14" fill="#f87171" text-anchor="middle" font-size="10">I0.0</text>
+                  <text x="110" y="60" fill="#718096" text-anchor="middle" font-size="9">START</text>
+
+                  <!-- Lower branch: Q0.0 seal-in contact (NO) -->
+                  <line x1="60" y1="75" x2="80" y2="75" stroke="#c084fc" stroke-width="2" stroke-dasharray="4,2"/>
+                  <line x1="80" y1="63" x2="80" y2="87" stroke="#c084fc" stroke-width="2" stroke-dasharray="4,2"/>
+                  <line x1="140" y1="63" x2="140" y2="87" stroke="#c084fc" stroke-width="2" stroke-dasharray="4,2"/>
+                  <line x1="80" y1="63" x2="140" y2="63" stroke="#c084fc" stroke-width="2" stroke-dasharray="4,2"/>
+                  <line x1="140" y1="75" x2="190" y2="75" stroke="#c084fc" stroke-width="2" stroke-dasharray="4,2"/>
+                  <text x="110" y="100" fill="#c084fc" text-anchor="middle" font-size="9">SEAL-IN</text>
+                  <text x="110" y="57" fill="#c084fc" text-anchor="middle" font-size="10">Q0.0</text>
+
+                  <!-- Wire from right join to STOP contact -->
+                  <line x1="210" y1="55" x2="240" y2="55" stroke="#79c0ff" stroke-width="2"/>
+
+                  <!-- NC Contact: STOP button (I0.1) — has diagonal slash -->
+                  <line x1="240" y1="43" x2="240" y2="67" stroke="#f87171" stroke-width="2"/>
+                  <line x1="300" y1="43" x2="300" y2="67" stroke="#f87171" stroke-width="2"/>
+                  <line x1="240" y1="43" x2="300" y2="43" stroke="#f87171" stroke-width="2"/>
+                  <!-- NC slash through contact -->
+                  <line x1="255" y1="67" x2="285" y2="43" stroke="#f87171" stroke-width="1.5"/>
+                  <line x1="300" y1="55" x2="360" y2="55" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="270" y="34" fill="#f87171" text-anchor="middle" font-size="10">I0.1</text>
+                  <text x="270" y="82" fill="#718096" text-anchor="middle" font-size="9">STOP (NC)</text>
+
+                  <!-- Output coil Q0.0 -->
+                  <line x1="360" y1="55" x2="372" y2="55" stroke="#4ade80" stroke-width="2"/>
+                  <circle cx="387" cy="55" r="15" fill="none" stroke="#4ade80" stroke-width="2"/>
+                  <line x1="402" y1="55" x2="442" y2="55" stroke="#4ade80" stroke-width="2"/>
+                  <text x="387" y="25" fill="#4ade80" text-anchor="middle" font-size="10">Q0.0</text>
+                  <text x="387" y="82" fill="#718096" text-anchor="middle" font-size="9">MOTOR</text>
+
+                  <text x="4" y="58" fill="#2d3748" text-anchor="middle" font-size="9">1</text>
+                </svg>
+              </div>
+              <div class="lad-truth">
+                <span><span class="dot-on"></span> Press START → Q0.0 latches ON (seal-in holds it)</span>
+                <span><span class="dot-off"></span> Press STOP → NC opens → Q0.0 OFF</span>
+              </div>
+            </div>
+
+            <!-- EXAMPLE 4: Interlock (FWD / REV) -->
+            <div class="lad-example">
+              <div class="lad-title">
+                Example 4 — Interlocking Circuit
+                <span class="lad-tag ilock">INTERLOCK</span>
+              </div>
+              <div class="lad-desc">
+                Motor FWD (Q0.0) and REV (Q0.1) can <strong>never both be ON</strong>. Each rung has the other output's NC contact — if FWD is ON, its NC breaks the REV rung, and vice versa.
+              </div>
+              <div class="lad-svg-wrap">
+                <svg width="460" height="140" viewBox="0 0 460 140" xmlns="http://www.w3.org/2000/svg"
+                     font-family="'JetBrains Mono', monospace" font-size="11">
+
+                  <!-- Power rails -->
+                  <line x1="18" y1="8" x2="18" y2="132" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="442" y1="8" x2="442" y2="132" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- ── RUNG 1: FWD ── -->
+                  <!-- Rail → NO I0.0 (FWD btn) -->
+                  <line x1="18" y1="38" x2="68" y2="38" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="68" y1="26" x2="68" y2="50" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="128" y1="26" x2="128" y2="50" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="68" y1="26" x2="128" y2="26" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="128" y1="38" x2="178" y2="38" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="98" y="18" fill="#f87171" text-anchor="middle" font-size="10">I0.0</text>
+                  <text x="98" y="62" fill="#718096" text-anchor="middle" font-size="9">FWD BTN</text>
+
+                  <!-- → NC Q0.1 (REV interlock) -->
+                  <line x1="178" y1="26" x2="178" y2="50" stroke="#f97316" stroke-width="2"/>
+                  <line x1="238" y1="26" x2="238" y2="50" stroke="#f97316" stroke-width="2"/>
+                  <line x1="178" y1="26" x2="238" y2="26" stroke="#f97316" stroke-width="2"/>
+                  <!-- NC slash -->
+                  <line x1="193" y1="50" x2="223" y2="26" stroke="#f97316" stroke-width="1.5"/>
+                  <line x1="238" y1="38" x2="352" y2="38" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="208" y="18" fill="#f97316" text-anchor="middle" font-size="10">Q0.1</text>
+                  <text x="208" y="62" fill="#f97316" text-anchor="middle" font-size="9">REV NC</text>
+
+                  <!-- Coil Q0.0 -->
+                  <line x1="352" y1="38" x2="364" y2="38" stroke="#4ade80" stroke-width="2"/>
+                  <circle cx="379" cy="38" r="13" fill="none" stroke="#4ade80" stroke-width="2"/>
+                  <line x1="392" y1="38" x2="442" y2="38" stroke="#4ade80" stroke-width="2"/>
+                  <text x="379" y="15" fill="#4ade80" text-anchor="middle" font-size="10">Q0.0</text>
+                  <text x="379" y="62" fill="#718096" text-anchor="middle" font-size="9">FWD</text>
+                  <text x="4" y="41" fill="#2d3748" text-anchor="middle" font-size="9">1</text>
+
+                  <!-- separator dashed line -->
+                  <line x1="28" y1="76" x2="432" y2="76" stroke="#2d3748" stroke-width="1" stroke-dasharray="4,4"/>
+
+                  <!-- ── RUNG 2: REV ── -->
+                  <!-- Rail → NO I0.1 (REV btn) -->
+                  <line x1="18" y1="102" x2="68" y2="102" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="68" y1="90" x2="68" y2="114" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="128" y1="90" x2="128" y2="114" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="68" y1="90" x2="128" y2="90" stroke="#79c0ff" stroke-width="2"/>
+                  <line x1="128" y1="102" x2="178" y2="102" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="98" y="84" fill="#f87171" text-anchor="middle" font-size="10">I0.1</text>
+                  <text x="98" y="126" fill="#718096" text-anchor="middle" font-size="9">REV BTN</text>
+
+                  <!-- → NC Q0.0 (FWD interlock) -->
+                  <line x1="178" y1="90" x2="178" y2="114" stroke="#f97316" stroke-width="2"/>
+                  <line x1="238" y1="90" x2="238" y2="114" stroke="#f97316" stroke-width="2"/>
+                  <line x1="178" y1="90" x2="238" y2="90" stroke="#f97316" stroke-width="2"/>
+                  <line x1="193" y1="114" x2="223" y2="90" stroke="#f97316" stroke-width="1.5"/>
+                  <line x1="238" y1="102" x2="352" y2="102" stroke="#79c0ff" stroke-width="2"/>
+                  <text x="208" y="84" fill="#f97316" text-anchor="middle" font-size="10">Q0.0</text>
+                  <text x="208" y="126" fill="#f97316" text-anchor="middle" font-size="9">FWD NC</text>
+
+                  <!-- Coil Q0.1 -->
+                  <line x1="352" y1="102" x2="364" y2="102" stroke="#4ade80" stroke-width="2"/>
+                  <circle cx="379" cy="102" r="13" fill="none" stroke="#4ade80" stroke-width="2"/>
+                  <line x1="392" y1="102" x2="442" y2="102" stroke="#4ade80" stroke-width="2"/>
+                  <text x="379" y="84" fill="#4ade80" text-anchor="middle" font-size="10">Q0.1</text>
+                  <text x="379" y="126" fill="#718096" text-anchor="middle" font-size="9">REV</text>
+                  <text x="4" y="105" fill="#2d3748" text-anchor="middle" font-size="9">2</text>
+                </svg>
+              </div>
+              <div class="lad-truth">
+                <span><span class="dot-on"></span> FWD ON → Q0.1 NC opens → REV blocked</span>
+                <span><span class="dot-off"></span> Both buttons pressed → first one wins, second blocked</span>
+              </div>
+            </div>
+
+          </div><!-- /lad-grid -->
+
+          <!-- TON Timer full-width -->
+          <div class="lad-example" style="margin-top:12px;">
+            <div class="lad-title">
+              Example 5 — TON Timer (ON-Delay)
+              <span class="lad-tag timer">TIMER</span>
+            </div>
+            <div class="lad-desc">
+              After START (I0.0) is held ON for <strong>5 seconds</strong>, Motor (Q0.0) activates via timer bit T37.
+              Releasing I0.0 resets the timer immediately. The TON block sits against the <strong>right rail</strong>.
+            </div>
+            <div class="lad-svg-wrap">
+              <svg width="680" height="130" viewBox="0 0 680 130" xmlns="http://www.w3.org/2000/svg"
+                   font-family="'JetBrains Mono', monospace" font-size="11">
+
+                <!-- Power rails -->
+                <line x1="18" y1="8" x2="18" y2="122" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+                <line x1="662" y1="8" x2="662" y2="122" stroke="#4ade80" stroke-width="3" stroke-linecap="round"/>
+
+                <!-- ═══ RUNG 1: Timer rung ═══ -->
+                <!-- Rail → NO contact I0.0 -->
+                <line x1="18" y1="45" x2="68" y2="45" stroke="#79c0ff" stroke-width="2"/>
+                <line x1="68" y1="33" x2="68" y2="57" stroke="#79c0ff" stroke-width="2"/>
+                <line x1="128" y1="33" x2="128" y2="57" stroke="#79c0ff" stroke-width="2"/>
+                <line x1="68" y1="33" x2="128" y2="33" stroke="#79c0ff" stroke-width="2"/>
+                <line x1="128" y1="45" x2="240" y2="45" stroke="#79c0ff" stroke-width="2"/>
+                <text x="98" y="24" fill="#f87171" text-anchor="middle" font-size="10">I0.0</text>
+                <text x="98" y="70" fill="#718096" text-anchor="middle" font-size="9">START</text>
+
+                <!-- TON Timer block (right-rail touching) -->
+                <rect x="240" y="18" width="160" height="70" rx="5"
+                      fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5"/>
+                <!-- Block title -->
+                <text x="320" y="34" fill="#79c0ff" text-anchor="middle" font-size="12" font-weight="bold">TON</text>
+                <!-- IN pin -->
+                <line x1="240" y1="45" x2="252" y2="45" stroke="#79c0ff" stroke-width="2"/>
+                <text x="258" y="49" fill="#79c0ff" font-size="9">IN</text>
+                <!-- PT label -->
+                <text x="258" y="66" fill="#718096" font-size="9">PT</text>
+                <text x="296" y="66" fill="#fbbf24" font-size="9">T#5s</text>
+                <!-- Timer name top right -->
+                <text x="390" y="34" fill="#fbbf24" text-anchor="start" font-size="9">T37</text>
+                <!-- Q output pin -->
+                <line x1="400" y1="45" x2="440" y2="45" stroke="#fbbf24" stroke-width="2"/>
+                <text x="386" y="49" fill="#fbbf24" font-size="9">Q</text>
+
+                <!-- Rung 1 end wire to right rail -->
+                <line x1="440" y1="45" x2="662" y2="45" stroke="#79c0ff" stroke-width="1" stroke-dasharray="0"/>
+
+                <!-- Rung number 1 -->
+                <text x="4" y="48" fill="#2d3748" text-anchor="middle" font-size="9">1</text>
+
+                <!-- separator -->
+                <line x1="28" y1="96" x2="652" y2="96" stroke="#2d3748" stroke-width="1" stroke-dasharray="4,4"/>
+
+                <!-- ═══ RUNG 2: Output rung using T37 bit ═══ -->
+                <!-- Rail → NO contact T37 -->
+                <line x1="18" y1="112" x2="68" y2="112" stroke="#79c0ff" stroke-width="2"/>
+                <line x1="68" y1="100" x2="68" y2="124" stroke="#fbbf24" stroke-width="2"/>
+                <line x1="128" y1="100" x2="128" y2="124" stroke="#fbbf24" stroke-width="2"/>
+                <line x1="68" y1="100" x2="128" y2="100" stroke="#fbbf24" stroke-width="2"/>
+                <line x1="128" y1="112" x2="500" y2="112" stroke="#79c0ff" stroke-width="2"/>
+                <text x="98" y="94" fill="#fbbf24" text-anchor="middle" font-size="10">T37</text>
+
+                <!-- Coil Q0.0 -->
+                <line x1="500" y1="112" x2="514" y2="112" stroke="#4ade80" stroke-width="2"/>
+                <circle cx="529" cy="112" r="13" fill="none" stroke="#4ade80" stroke-width="2"/>
+                <line x1="542" y1="112" x2="662" y2="112" stroke="#4ade80" stroke-width="2"/>
+                <text x="529" y="94" fill="#4ade80" text-anchor="middle" font-size="10">Q0.0</text>
+                <text x="529" y="130" fill="#718096" text-anchor="middle" font-size="9">MOTOR</text>
+
+                <!-- Rung number 2 -->
+                <text x="4" y="115" fill="#2d3748" text-anchor="middle" font-size="9">2</text>
+              </svg>
+            </div>
+            <div class="lad-truth">
+              <span><span class="dot-on"></span> I0.0 held ON ≥ 5s → T37 bit = 1 → Q0.0 ON</span>
+              <span><span class="dot-off"></span> I0.0 goes OFF → timer resets → Q0.0 OFF immediately</span>
+              <span style="color:#fbbf24;">⚠ Timer block must touch the right power rail</span>
+            </div>
+          </div>
+
+          <div class="keynote" style="margin-top:12px;">
+            🎨 <strong>Colour legend:</strong>
+            &nbsp;<span style="color:#79c0ff">■</span> Input wire / NO contact
+            &nbsp;<span style="color:#f87171">■</span> Input address label
+            &nbsp;<span style="color:#f97316">■</span> NC contact (interlock)
+            &nbsp;<span style="color:#c084fc">■</span> Seal-in (feedback) path
+            &nbsp;<span style="color:#fbbf24">■</span> Timer signals
+            &nbsp;<span style="color:#4ade80">■</span> Output coil / power rail
+          </div>
+
+        </div><!-- /card full -->
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CH5 ═══════════════════════════ -->
+    <section id="ch5" class="chapter">
+      <div class="chapter-header ch5-header">
+        <div class="ch-number">05</div>
+        <div>
+          <h2>Timers &amp; Counters</h2>
+          <p class="ch-desc">TON · TOF · 5 S7 Timer Types · Count Up/Down · S7 Specs</p>
+        </div>
+      </div>
+
+      <div class="cards">
+
+        <div class="card full">
+          <h3>⏱️ TON vs TOF — The Core Difference</h3>
+          <div class="timer-pair">
+            <div class="timer-card">
+              <span class="tbadge ton">TON — ON Delay</span>
+              <strong>Output turns ON <em>late</em></strong>
+              <p>▸ Input goes HIGH → wait delay T → Output ON</p>
+              <p>▸ Input goes LOW → Output OFF immediately</p>
+              <div class="tdiag">
+                <div class="tdiag-row"><span class="tlbl">IN</span><div class="twave"><div class="tlow" style="width:20%"></div><div class="thigh-b" style="width:60%"></div><div class="tlow" style="width:20%"></div></div></div>
+                <div class="tdiag-row"><span class="tlbl">Q</span><div class="twave"><div class="tlow" style="width:36%"></div><div class="thigh-b" style="width:44%"></div><div class="tlow" style="width:20%"></div></div></div>
+                <div class="tnote">↑ delay before Q goes ON ↑</div>
+              </div>
+            </div>
+            <div class="timer-card">
+              <span class="tbadge tof">TOF — OFF Delay</span>
+              <strong>Output turns OFF <em>late</em></strong>
+              <p>▸ Input goes HIGH → Output ON immediately</p>
+              <p>▸ Input goes LOW → wait delay T → Output OFF</p>
+              <div class="tdiag">
+                <div class="tdiag-row"><span class="tlbl">IN</span><div class="twave"><div class="tlow" style="width:20%"></div><div class="thigh-p" style="width:40%"></div><div class="tlow" style="width:40%"></div></div></div>
+                <div class="tdiag-row"><span class="tlbl">Q</span><div class="twave"><div class="tlow" style="width:20%"></div><div class="thigh-p" style="width:56%"></div><div class="tlow" style="width:24%"></div></div></div>
+                <div class="tnote">↑ delay before Q goes OFF ↑</div>
+              </div>
+            </div>
+          </div>
+          <div class="keynote">🧠 <strong>Memory trick:</strong> &nbsp;TON = "Turn ON <em>late</em>" &nbsp;|&nbsp; TOF = "Turn OFF <em>late</em>"</div>
+        </div>
+
+        <div class="card">
+          <h3>🗂️ S7 Timer Types (64 total: T0–T63)</h3>
+          <div class="timer-list">
+            <div class="trow"><code>S_Pulse</code> Pulse — active for fixed duration, ignores input length</div>
+            <div class="trow"><code>S_Pext</code> Extended Pulse — restarts if retriggered before expiry</div>
+            <div class="trow hl"><code>S_ODT</code> ON Delay Timer (TON) ★ most used</div>
+            <div class="trow"><code>S_ODTS</code> Retentive ON Delay — keeps accumulated time even if input drops</div>
+            <div class="trow hl"><code>S_OFFDT</code> OFF Delay Timer (TOF) ★ most used</div>
+          </div>
+          <div class="keynote" style="margin-top:10px;">🔧 Timer rule: Timer instruction must be placed next to the <strong>RIGHT RAIL</strong> of a rung.</div>
+        </div>
+
+        <div class="card">
+          <h3>🔢 Counters (S7: 64 total, C0–C63, range 0–999)</h3>
+          <div class="counter-grid">
+            <div class="counter-card"><span class="cbadge cu">CU</span><strong>Count Up</strong><p>+1 on each rising edge. Stops at 999.</p></div>
+            <div class="counter-card"><span class="cbadge cd">CD</span><strong>Count Down</strong><p>−1 on each rising edge. Stops at 0.</p></div>
+            <div class="counter-card"><span class="cbadge ud">CU+CD</span><strong>Up / Down</strong><p>Dir=0 → count up. Dir=1 → count down.</p></div>
+          </div>
+          <div class="cpins">
+            <strong>Counter Pin Connections</strong>
+            <div class="pin-grid">
+              <span><code>CU</code> Count Up input</span>
+              <span><code>CD</code> Count Down input</span>
+              <span><code>S</code> Set — loads preset value</span>
+              <span><code>R</code> Reset → count = 0</span>
+              <span><code>PV</code> Preset Value (C#0–999)</span>
+              <span><code>Q</code> Output: 1 if count &gt; 0</span>
+              <span><code>BI</code> Current value (binary)</span>
+              <span><code>BCD</code> Current value (BCD)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>💡 Real-World Timer Examples</h3>
+          <div class="app-list">
+            <div class="app-item"><span class="aicon">🚦</span><div><strong>Traffic Light Sequence</strong><small>Red 5s → Red+Amber 2s → Green 7s → Amber 2s → repeat (16s cycle)</small></div></div>
+            <div class="app-item"><span class="aicon">🚪</span><div><strong>Automated Gate System</strong><small>Horn sounds 2s during movement + Flashing indicator + Motor interlocking</small></div></div>
+            <div class="app-item"><span class="aicon">💡</span><div><strong>Flashing Lamp</strong><small>ON 5s → OFF 5s → repeat continuously (two cascaded timers)</small></div></div>
+            <div class="app-item"><span class="aicon">📦</span><div><strong>Conveyor Box Counter</strong><small>After N boxes pass sensor, divert to alternate route (counter application)</small></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ QUICK REF ═══════════════════════════ -->
+    <section id="qr" class="chapter">
+      <div class="chapter-header qr-header">
+        <div class="ch-number">⚡</div>
+        <div>
+          <h2>Quick Reference</h2>
+          <p class="ch-desc">Key Numbers · Definitions · Last-Minute Cheatsheet</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card full">
+          <h3>🔢 Numbers You MUST Remember</h3>
+          <div class="num-grid">
+            <div class="num-item"><span class="bignum">1969</span><small>First PLC (MODICON 084)</small></div>
+            <div class="num-item"><span class="bignum">3</span><small>Scan cycle steps</small></div>
+            <div class="num-item"><span class="bignum">5</span><small>PLC programming languages</small></div>
+            <div class="num-item"><span class="bignum">5</span><small>S7 timer types</small></div>
+            <div class="num-item"><span class="bignum">64</span><small>S7 timers (T0–T63)</small></div>
+            <div class="num-item"><span class="bignum">64</span><small>S7 counters (C0–C63)</small></div>
+            <div class="num-item"><span class="bignum">999</span><small>Max counter value</small></div>
+            <div class="num-item"><span class="bignum">16</span><small>Bits per timer/counter word</small></div>
+          </div>
+        </div>
+        <div class="card full">
+          <h3>📖 Key Definitions Cheatsheet</h3>
+          <div class="def-list">
+            <div class="def-item"><code>PLC</code> Digital computer for industrial process control using programmable memory</div>
+            <div class="def-item"><code>Scan Time</code> Time for one complete Read Inputs → Execute Program → Update Outputs cycle</div>
+            <div class="def-item"><code>TON</code> ON-Delay Timer — output turns ON after a set delay following input activation</div>
+            <div class="def-item"><code>TOF</code> OFF-Delay Timer — output turns OFF after a set delay following input deactivation</div>
+            <div class="def-item"><code>Latch</code> Lock output ON indefinitely — only released by explicit UNLATCH coil</div>
+            <div class="def-item"><code>Interlock</code> NC contact of Output A in rung of B — prevents conflicting simultaneous outputs</div>
+            <div class="def-item"><code>XIC</code> Examine If Closed — the NO contact instruction (bit must be 1)</div>
+            <div class="def-item"><code>XIO</code> Examine If Open — the NC contact instruction (bit must be 0)</div>
+            <div class="def-item"><code>RLO</code> Result of Logic Operation — logical result evaluated in a rung</div>
+            <div class="def-item"><code>Hysteresis</code> Dead band added to ON/OFF control to prevent rapid chattering</div>
+            <div class="def-item"><code>HMI</code> Human Machine Interface — operator display for process monitoring</div>
+            <div class="def-item"><code>PIQ</code> Process Output Image — PLC's internal memory table of all output states</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>MEK629 · Industrial Automation · UiTM · Dr Rosidah Sam</p>
+      <p class="sub">Simple notes for smart revision 🔧</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+// Scroll progress bar
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const s = document.documentElement.scrollTop;
+  const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  progress.style.width = (s / h * 100) + '%';
+});
+
+// Reveal chapters on scroll
+const chapters = document.querySelectorAll('.chapter');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.04 });
+chapters.forEach(c => revealObs.observe(c));
+
+// Stagger card entrance
+chapters.forEach(ch => {
+  ch.querySelectorAll('.card').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.06) + 's';
+  });
+});
+
+// Active nav highlighting
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.chapter');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navItems.forEach(n => {
+        n.classList.remove('active');
+        if (n.getAttribute('href') === '#' + e.target.id) n.classList.add('active');
+      });
+    }
+  });
+}, { rootMargin: '-25% 0px -65% 0px' });
+sections.forEach(s => navObs.observe(s));
+
+// Smooth scroll nav
+navItems.forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(item.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Randomize LED blink timing
+document.querySelectorAll('.led').forEach(led => {
+  led.style.animationDelay = (Math.random() * 2) + 's';
+});
+</script>
+</body>
+</html>
